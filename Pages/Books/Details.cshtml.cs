@@ -19,7 +19,7 @@ namespace Ormos_beatrice_Lab2.Pages.Books
             _context = context;
         }
 
-        public Book Book { get; set; } = default!;
+        public Book Book { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,14 +28,14 @@ namespace Ormos_beatrice_Lab2.Pages.Books
                 return NotFound();
             }
 
-            var book = await _context.Book.FirstOrDefaultAsync(m => m.ID == id);
-            if (book == null)
+            Book = await _context.Book
+                 .Include(b => b.BookCategories) 
+                     .ThenInclude(bc => bc.Category) 
+                 .FirstOrDefaultAsync(m => m.ID == id);
+
+            if (Book == null)
             {
                 return NotFound();
-            }
-            else
-            {
-                Book = book;
             }
             return Page();
         }
